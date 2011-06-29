@@ -14,18 +14,54 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import BeautifulSoup
+import urllib2
+
+from google.appengine.ext.webapp import template
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
+from google.appengine.api import urlfetch
 
 
-class MainHandler(webapp.RequestHandler):
+from google.appengine.ext import db
+
+
+class Hook(db.Model):
+    text = db.TextProperty()
+    page = db.LinkProperty()
+    category = db.StringProperty() # Remove Me later
+    #projects = db.ListProperty(db.key, default=None)
+
+class HomeHandler(webapp.RequestHandler):
     def get(self):
-        self.response.out.write('Hello world!')
+        self.response.out.write('<h1>DYK API</h1>')
+
+class MakeHandler(webapp.RequestHandler):
+    def get(self):
+        f = urlfetch.fetch("http://en.wikipedia.org/wiki/Wikipedia:Recent_additions")
+        soup = BeautifulSoup.BeautifulSoup(f.content)
+        lis  = soup.findAll("li", attrs={"style":"-moz-float-edge: content-box"})
+        for li in lis:
+            try:
+                link = li.b.a["href"]
+            except TypeError:
+                link = li.find("a")["href"]
+            link = link.replace("/wiki/","")
+            hook = { "text" : li.text, "link" : link }
+            #store it in DB
+            dbhook = Hook()
+            dbhook.text = hook["text"]
+            dbhook.page = "http://en.wikipedia.org/wiki/"+hook["link"]
+            dbhook.category = "June"
+            dbhook.put()
+            self.response.out.write(unicode(hook["link"]))
+            self.response.out.write("<br />")
 
 
 def main():
-    application = webapp.WSGIApplication([('/', MainHandler)],
+    application = webapp.WSGIApplication([('/', HomeHandler),
+                                          ('/make', MakeHandler)],
                                          debug=True)
     util.run_wsgi_app(application)
 
