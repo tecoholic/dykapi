@@ -3,6 +3,14 @@ version: 1
 runtime: python
 api_version: 1
 
+
 handlers:
+- url: /admin/remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
+
 - url: .*
   script: main.py
+
+builtins:
+- datastore_admin: on

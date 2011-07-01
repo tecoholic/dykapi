@@ -25,11 +25,12 @@ from google.appengine.api import urlfetch
 
 
 from google.appengine.ext import db
-
+class Test(db.Model):
+    lis = db.TextProperty()
 
 class Hook(db.Model):
     text = db.TextProperty()
-    page = db.LinkProperty()
+    page = db.StringProperty()
     category = db.StringProperty() # Remove Me later
     #projects = db.ListProperty(db.key, default=None)
 
@@ -42,21 +43,20 @@ class MakeHandler(webapp.RequestHandler):
         f = urlfetch.fetch("http://en.wikipedia.org/wiki/Wikipedia:Recent_additions")
         soup = BeautifulSoup.BeautifulSoup(f.content)
         lis  = soup.findAll("li", attrs={"style":"-moz-float-edge: content-box"})
+        tet = Test()
+        tet.lis = lis.__str__()
+        tet.put()
         for li in lis:
+            dbhook = Hook()
             try:
                 link = li.b.a["href"]
             except TypeError:
                 link = li.find("a")["href"]
-            link = link.replace("/wiki/","")
-            hook = { "text" : li.text, "link" : link }
-            #store it in DB
-            dbhook = Hook()
-            dbhook.text = hook["text"]
-            dbhook.page = "http://en.wikipedia.org/wiki/"+hook["link"]
+            dbhook.text = str(li)
+            dbhook.page = link.replace("/wiki/","")
             dbhook.category = "June"
             dbhook.put()
-            self.response.out.write(unicode(hook["link"]))
-            self.response.out.write("<br />")
+        self.response.out.write("Done!")
 
 
 def main():
