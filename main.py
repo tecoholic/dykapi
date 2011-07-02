@@ -21,47 +21,30 @@ from google.appengine.ext.webapp import template
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
-from google.appengine.api import urlfetch
-
-
 from google.appengine.ext import db
+
 class Test(db.Model):
     lis = db.TextProperty()
 
-class Hook(db.Model):
+class Permission(db.Model):
     text = db.TextProperty()
-    page = db.StringProperty()
-    category = db.StringProperty() # Remove Me later
-    #projects = db.ListProperty(db.key, default=None)
+    id = db.StringProperty()
+    link = db.StringProperty()
 
 class HomeHandler(webapp.RequestHandler):
     def get(self):
         self.response.out.write('<h1>DYK API</h1>')
 
-class MakeHandler(webapp.RequestHandler):
+class ApiHandler(webapp.RequestHandler):
     def get(self):
-        f = urlfetch.fetch("http://en.wikipedia.org/wiki/Wikipedia:Recent_additions")
-        soup = BeautifulSoup.BeautifulSoup(f.content)
-        lis  = soup.findAll("li", attrs={"style":"-moz-float-edge: content-box"})
-        tet = Test()
-        tet.lis = lis.__str__()
-        tet.put()
-        for li in lis:
-            dbhook = Hook()
-            try:
-                link = li.b.a["href"]
-            except TypeError:
-                link = li.find("a")["href"]
-            dbhook.text = str(li)
-            dbhook.page = link.replace("/wiki/","")
-            dbhook.category = "June"
-            dbhook.put()
-        self.response.out.write("Done!")
-
+        hook  = db.GqlQuery("SELECT * FROM Permission WHERE id='2011-April-3'")
+        #print type(hook)
+        self.response.out.write(hook[0].link)
+        #self.response.out.write(hook.text)
 
 def main():
     application = webapp.WSGIApplication([('/', HomeHandler),
-                                          ('/make', MakeHandler)],
+                                          ('/api', ApiHandler)],
                                          debug=True)
     util.run_wsgi_app(application)
 
