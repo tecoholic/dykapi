@@ -57,15 +57,13 @@ class ApiHandler(webapp.RequestHandler):
             metadict = {'metaurl' : "http://en.wikipedia.org"+a["href"],
                         'metatext' : a.text }
             ashlinks.append(metadict)
-        pageurl = "http://en.wikipedia.org/wiki/"+hook[0].link.replace(";", ",")
         tex = dehtml.dehtml(hook[0].text)
-        tex = tex.replace("... that ","",1).replace(';',',')
+        tex = tex.replace("... that ","",1).replace(';',',').rstrip("?")
         texlt = tex.split(" ",1)
         tex = texlt[0].capitalize()+" "+texlt[1]
         responseData = {"response": [{"hook":{
                     "title" : urllib2.unquote(hook[0].link.replace(";", ",")),
                     "text" : tex,
-                    "pageurl" : pageurl,
                     "metadata": ashlinks}}]}
         if format == "json":
             self.ReturnJSON(responseData)
