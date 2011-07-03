@@ -4,13 +4,11 @@ from xml.dom.minidom import Document
 import copy
 
 class dict2xml(object):
-	doc     = Document()
-
 	def __init__(self, structure):
+		self.doc = Document()
 		if len(structure) == 1:
-			rootName    = unicode(structure.keys()[0])
-			self.root   = self.doc.createElement(rootName)
-
+			rootName = unicode(structure.keys()[0])
+			self.root = self.doc.createElement(rootName)
 			self.doc.appendChild(self.root)
 			self.build(self.root, structure[rootName])
 

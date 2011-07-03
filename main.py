@@ -62,11 +62,11 @@ class ApiHandler(webapp.RequestHandler):
         tex = tex.replace("... that ","",1).replace(';',',')
         texlt = tex.split(" ",1)
         tex = texlt[0].capitalize()+" "+texlt[1]
-        responseData = {"hook":{
+        responseData = {"response": [{"hook":{
                     "title" : urllib2.unquote(hook[0].link.replace(";", ",")),
                     "text" : tex,
                     "pageurl" : pageurl,
-                    "metadata": ashlinks}}
+                    "metadata": ashlinks}}]}
         if format == "json":
             self.ReturnJSON(responseData)
         elif format == "xml":
