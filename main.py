@@ -17,6 +17,8 @@
 import urllib2
 import random
 
+from xml.dom.minidom import Document
+
 import BeautifulSoup
 
 from google.appengine.ext.webapp import template
@@ -27,6 +29,7 @@ from google.appengine.ext import db
 from django.utils import simplejson
 
 import dehtml
+from dict2xml import dict2xml
 
 class Test(db.Model):
     lis = db.TextProperty()
@@ -51,23 +54,36 @@ class ApiHandler(webapp.RequestHandler):
         ash = soup.findAll("a")
         ashlinks = []
         for a in ash:
-            ashlinks.append("http://en.wikipedia.org"+a["href"])
+            metadict = {'metaurl' : "http://en.wikipedia.org"+a["href"],
+                        'metatext' : a.text }
+            ashlinks.append(metadict)
         pageurl = "http://en.wikipedia.org/wiki/"+hook[0].link.replace(";", ",")
         tex = dehtml.dehtml(hook[0].text)
         tex = tex.replace("... that ","",1).replace(';',',')
         texlt = tex.split(" ",1)
         tex = texlt[0].capitalize()+" "+texlt[1]
-        
+        responseData = {"hook":{
+                    "title" : urllib2.unquote(hook[0].link.replace(";", ",")),
+                    "text" : tex,
+                    "pageurl" : pageurl,
+                    "metadata": ashlinks}}
         if format == "json":
-            self.response.headers['Content-Type'] = 'text/plain'
-            jsonData = {"title" : urllib2.unquote(hook[0].link.replace(";", ",")),
-                        "text" : unicode(tex),
-                        "pageurl" : pageurl,
-                        "metaurls": ashlinks}
-            self.response.out.write(simplejson.dumps(jsonData))
+            self.ReturnJSON(responseData)
+        elif format == "xml":
+            self.ReturnXML(responseData)
         else:
             self.response.out.write("Incompatible format or No format specified!")
 
+    def ReturnJSON(self, data):
+        ''' the function gets the data as a dictionary and returns the JSON object '''
+        self.response.headers["Content-Type"] = 'application/json'
+        self.response.out.write(simplejson.dumps(data))
+    
+    def ReturnXML(self, data):
+        ''' the function gets the data dict and returns the XML response '''
+        xmltxt = dict2xml(data)
+        self.response.headers["Content-Type"] = 'text/xml'
+        self.response.out.write(xmltxt.doc.toxml('utf-8'))
 
 def main():
     application = webapp.WSGIApplication([('/', HomeHandler),
