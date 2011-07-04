@@ -1,4 +1,5 @@
-*.htm
+
+*.htm
 *.html
 *.pyc
 *.csv
