@@ -3,11 +3,11 @@ DYK API is s api which returns Did You Know hook data of the wikipedia. It gives
 As of now the code can genearte a random hook from the datastore and retuirn the related information in the format of either
 JSON or XML.
 
-#Sample Request to the API
+##Sample Request to the API
 http;//dykapi.appspot.com/api/?format=json
 http://dykapi.appspot.com/api/?format=xml
 
-#Sample JSON output
+###Sample JSON output
 `{"response": [
 	{"hook": {
 		"text": "The only known specimen of the extinct planthopper Glisachaemus jonasdamzeni 
@@ -22,7 +22,7 @@ http://dykapi.appspot.com/api/?format=xml
 	}]
 }`
 
-#Sample XML output
+###Sample XML output
 `<response>
 	<hook>
 		<text>Addition of sulfur increases the refractive index of polymers </text>

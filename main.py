@@ -47,9 +47,10 @@ class HomeHandler(webapp.RequestHandler):
 class ApiHandler(webapp.RequestHandler):
     def get(self):
         format = self.request.get("format")
-        number = str(random.randint(0,500))
-        query = "SELECT * FROM Permission WHERE id='2011-April-"+number+"'"
-        hook  = db.GqlQuery(query)
+        hook  = db.GqlQuery(self.__queryString())
+        #find a way to redo until data is returned
+        while(hook.count() == 0):
+                hook = db.GqlQuery(self.__queryString())
         soup = BeautifulSoup.BeautifulSoup(hook[0].text.replace(";", ","))
         ash = soup.findAll("a")
         ashlinks = []
@@ -62,7 +63,7 @@ class ApiHandler(webapp.RequestHandler):
         texlt = tex.split(" ",1)
         tex = texlt[0].capitalize()+" "+texlt[1]
         responseData = {"response": [{"hook":{
-                    "title" : urllib2.unquote(hook[0].link.replace(";", ",")),
+                    "title" : hook[0].link.replace(";", ","),
                     "text" : tex,
                     "metadata": ashlinks}}]}
         if format == "json":
@@ -82,6 +83,17 @@ class ApiHandler(webapp.RequestHandler):
         xmltxt = dict2xml(data)
         self.response.headers["Content-Type"] = 'text/xml'
         self.response.out.write(xmltxt.doc.toxml('utf-8'))
+        
+    def __queryString(self):
+        ''' This fucntion generates a query string by selecting a random year, month and number '''
+        months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
+                'August', 'September', 'October', 'November', 'December']
+        year = random.randint(2004,2011)
+        month = months[random.randint(0,11)]
+        hook = random.randint(0,1200)
+        
+        query = "SELECT * FROM Permission WHERE id='"+str(year)+"-"+month+"-"+str(hook)+"'"
+        return query
 
 def main():
     application = webapp.WSGIApplication([('/', HomeHandler),
