@@ -29,7 +29,7 @@ class dict2xml(object):
 				grandFather.appendChild(tag)
 
 		else:
-			data    = unicode(structure)
+			data    = structure
 			tag     = self.doc.createTextNode(data)
 			father.appendChild(tag)
 

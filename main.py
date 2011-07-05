@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from urllib import unquote
 import urllib2
 import random
 
@@ -63,7 +64,7 @@ class ApiHandler(webapp.RequestHandler):
         texlt = tex.split(" ",1)
         tex = texlt[0].capitalize()+" "+texlt[1]
         responseData = {"response": [{"hook":{
-                    "title" : hook[0].link.replace(";", ","),
+                    "title" : unquote(hook[0].link.replace(";", ",")),
                     "text" : tex,
                     "metadata": ashlinks}}]}
         if format == "json":
