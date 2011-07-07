@@ -1,0 +1,5 @@
+cron:
+- description: monthly hooks scraper
+  url: /task/scraphooks
+  schedule: 1st monday of jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec 06:00
+
