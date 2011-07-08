@@ -9,8 +9,13 @@ handlers:
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin
 
+- url: /task/scraphooks
+  script: scrap.py
+  login: admin
+
 - url: .*
   script: main.py
 
 builtins:
 - datastore_admin: on
+
