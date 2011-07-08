@@ -39,7 +39,6 @@ transformers:
 
     - property: iden
       external_name: iden
-      import_transform: unicode
 
     - property: title
       external_name: title
