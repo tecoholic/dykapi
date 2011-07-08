@@ -42,7 +42,7 @@ class  ScraperHandler(webapp.RequestHandler):
         title = " ".join(title.split('_')).replace(",",";")
         content = unicode(hook).replace(",",";")
         iden = fil.replace(".html","-")+str(index)
-        hookfile.write(str(sno)+","+iden+","+title+","+link+","+content+"\n")
+        #hookfile.write(str(sno)+","+iden+","+title+","+link+","+content+"\n")
         print sno,title
         sno += 1
     #TODO-------- write to the dataStore here ---- 
