@@ -22,10 +22,6 @@ python_preamble:
 - import: google.appengine.api.datastore
 - import: google.appengine.api.users
 
-    iden = db.StringProperty()
-    title = db.StringProperty()
-    link = db.StringProperty()
-    content = db.TextProperty()
 
 transformers:
 - kind: Hook 
@@ -36,8 +32,8 @@ transformers:
       external_name: key
       export_transform: transform.key_id_or_name_as_string
 
-    - property: sno 
-      external_name: sno 
+    - property: sno
+      external_name: sno
       export_transform: transform.key_id_or_name_as_string
       import_transform: int
 
