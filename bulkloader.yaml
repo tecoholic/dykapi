@@ -28,7 +28,7 @@ python_preamble:
     content = db.TextProperty()
 
 transformers:
-- kind: Permission
+- kind: Hook 
   connector: csv
 
   property_map:
